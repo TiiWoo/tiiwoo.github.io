@@ -4,7 +4,7 @@
         <title>TiiWoo's Blog</title>
         <link>https://tiiwoo.github.io/TiiWoo.github.io</link>
         <description>喜欢玩</description>
-        <lastBuildDate>Sat, 06 Feb 2021 14:21:49 GMT</lastBuildDate>
+        <lastBuildDate>Sat, 06 Feb 2021 14:26:34 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>Gridsome Feed Plugin</generator>
         <atom:link href="https://tiiwoo.github.io/TiiWoo.github.io/atom.xml" rel="self" type="application/rss+xml"/>
@@ -136,250 +136,6 @@ int main() {
     return 0;
 }</code></pre>
 <p>[^1]: 题目来源：<a href="https://www.luogu.com.cn/problem/P3368">P3368 【模板】树状数组 2 - 洛谷 | 计算机科学教育新生态</a></p>
-]]></content:encoded>
-        </item>
-        <item>
-            <title><![CDATA[P3368 【模板】树状数组 1]]></title>
-            <link>https://tiiwoo.github.io/TiiWoo.github.io/posts/fenwick-tree-1/</link>
-            <guid>https://tiiwoo.github.io/TiiWoo.github.io/posts/fenwick-tree-1/</guid>
-            <pubDate>Sat, 06 Feb 2021 00:00:00 GMT</pubDate>
-            <content:encoded><![CDATA[<h2 id="题目">题目</h2>
-<p>[^1]</p>
-<h4 id="题目描述">题目描述</h4>
-<p>如题，已知一个数列，你需要进行下面两种操作：</p>
-<ul>
-<li>将某一个数加上 $x$</li>
-<li>求出某区间每一个数的和</li>
-</ul>
-<!--more-->
-
-<h4 id="输入格式">输入格式</h4>
-<p>第一行包含两个正整数 $n,m$，分别表示该数列数字的个数和操作的总个数。</p>
-<p>第二行包含 $n$ 个用空格分隔的整数，其中第 $i$ 个数字表示数列第 $i$ 项的初始值。</p>
-<p>接下来 $m$ 行每行包含 33 个整数，表示一个操作，具体如下：</p>
-<ul>
-<li><code>1 x k</code> 含义：将第 $x$ 个数加上 $k$</li>
-<li><code>2 x y</code> 含义：输出区间 $[x,y]$ 内每个数的和</li>
-</ul>
-<h4 id="输出格式">输出格式</h4>
-<p>输出包含若干行整数，即为所有操作 22 的结果。</p>
-<h4 id="输入输出样例">输入输出样例</h4>
-<p><strong>输入 #1</strong></p>
-<pre><code class="language-text">5 5
-1 5 4 2 3
-1 1 3
-2 2 5
-1 3 -1
-1 4 2
-2 1 4</code></pre>
-<p><strong>输出 #1</strong></p>
-<pre><code class="language-text">14
-16</code></pre>
-<h4 id="说明提示">说明/提示</h4>
-<p>【数据范围】</p>
-<p>对于 $30%$ 的数据，$1 \le n \le 8，1\le m \le 10$；</p>
-<p>对于 $70%$ 的数据，$1\le n,,m\le10^4;$</p>
-<p>对于 $100%$ 的数据，$1\le n,m \le 5\times 10^5$。</p>
-<p>样例说明：</p>
-<p>故输出结果 14、16</p>
-<p><img src="https://gitee.com/royce2003/blog/raw/master/img/2256.png" alt="数据范围"></p>
-<p>(写这篇呢其实是因为自己已经不会树状数组了，正好借此机会复习下 QAQ)</p>
-<h2 id="题解">题解</h2>
-<h3 id="树状数组">树状数组</h3>
-<p>首先需要了解什么是 <code>树状数组</code></p>
-<p>树状数组用的是树结构的思想，即树型逻辑结构，但他不是树形结构啦</p>
-<h4 id="特点">特点</h4>
-<blockquote>
-<p>树状数组 (Binary Indexed Tree(B.I.T), Fenwick Tree)是一个查询和修改复杂度都为 og(n) 的数据结构。主要用于查询任意两位之间的所有元素之和，但是每次只能修改一个元素的值；经过简单修改可以在 log(n) 的复杂度下进行范围修改，但是这时只能查询其中一个元素的值(如果加入多个辅助数组则可以实现区间修改与区间查询)。</p>
-</blockquote>
-<p>对于这题，简单来说就是单点修改区间查询，一般地，树状数组不支持区间修改单点差选，但是我们也有办法让他支持.....</p>
-<p>树状数组的优势就在于其维护的时间复杂度为 $O(log , n)$ ，而类似的前缀和数组维护的时间复杂度为 $O(n)$，两者的查询都是 $O(1)$</p>
-<p>（说到这我就想起来某次校内赛的xzt买煎饼。。。。还好我拿了20分）</p>
-<h3 id="前置知识">前置知识</h3>
-<h4 id="lowbit">lowbit</h4>
-<p>实际上，对于树状数组 $tree$ 的每一个 $i$，其实际意义应该为：算上其本身的讯息，总共存储了 $2^k$ 个元素的信息，其中 $k$ 表示 $i$ 在二进制下，末尾零的个数，同时也可以表示最小的含 1 位的二进制权值——换句话讲，$2^k$ 即可表示成：对于每个二进制意义下的 $i$，从最末位数 $k+1$ 位，保留这 $k+1$ 位并删除 $k+1$ 位以左的所有数位上的数，留下的新二进制数的实际大</p>
-<p><img src="https://gitee.com/royce2003/blog/raw/master/img/0dd7912397dda14482d369acbfb7d0a20df486d1.jpg" alt="树状数组结构"></p>
-<table>
-<thead>
-<tr>
-<th align="center">十进制</th>
-<th align="center">二进制</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">1</td>
-<td align="center">1</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="center">10</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="center">11</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="center">100</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="center">101</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="center">110</td>
-</tr>
-<tr>
-<td align="center">7</td>
-<td align="center">111</td>
-</tr>
-<tr>
-<td align="center">8</td>
-<td align="center">1000</td>
-</tr>
-<tr>
-<td align="center">9</td>
-<td align="center">1001</td>
-</tr>
-<tr>
-<td align="center">10</td>
-<td align="center">1010</td>
-</tr>
-</tbody></table>
-<p>图文并茂之后有没有看出点什么 QAQ</p>
-<p>记得当时学的时候，在学校大佬的帮助下才理解了这些东西，可能我比较菜吧</p>
-<p><del>没看出来就多看几遍吧</del> 好像也还是看不出来，那就记下来结论吧</p>
-<p>对于每一个 $x$ 的最低含一位，即上文中的 $2^k$,可以借助一个 $lowbit$ 函数实现 emmm 一个极其玄学的东西</p>
-<p>再把 <code>lowbit</code> 说简单点就是</p>
-<p>把一个整数变成二进制，从右往左找到第一个1，然后返回这个1所表示的十进制值。</p>
-<p>玄学公式登场 <code>x &amp; -x</code></p>
-<p>举个例子</p>
-<p>$$
-4 = 100,,-4 = 011 + 1 = 100\
-~\
-\because100,&amp;,100=100=4 \
- ~\
-\therefore lowbit(4)=4\
-$$</p>
-<pre><code class="language-cpp">int lowbit(int x) {
-    return x &amp; -x; //就是这么玄学
-}</code></pre>
-<p>为什么要这样干呢</p>
-<p>我们先列出 1~8 的 $lowbit$</p>
-<p>$1;2;1;4;1;2;1;8$</p>
-<p>我们让 $C[i]$ 管理 $A[i-lowbit(i)+1,,i]$ 这段区间，如下图</p>
-<p><img src="https://gitee.com/royce2003/blog/raw/master/img/Snipaste_03-19_11-45-31.png" alt="对应管理"></p>
-<p>那么我们把某个点 $+x$ 的时候只需要把能管到这个点的都 $+x$ 就好啦，那我们如何找哪些能管到我们修改的点呢，这时候就需要 $lowbit$ 了</p>
-<h4 id="前缀和">前缀和</h4>
-<h5 id="一维前缀和">一维前缀和</h5>
-<p>现有一个长度为 $N$ 的序列 $A$，需要进行 $M$ 次操作，每次操作选取从 $A_i$ 到 $A_j$ 共 $j-i+1$ 个数并求出他们的总和 （N 和 M 可以很大）  </p>
-<p>例：</p>
-<p>$$
-N=9,;A={3,1,4,1,5,9,2,6,5}
-$$</p>
-<p>如果按照题意暴力，最坏情况下时间复杂度 $O(n\times m)$（是这个吗，我咋感觉时间复杂度好像大概可能不是这个QAQ）</p>
-<p>反正时间复杂度挺高的就对了</p>
-<p>那我们可以新建一个数组 $B$ ，其中 $B_i=B_{i-1} +A_i$</p>
-<p>此时我们需要求 $a_i-a_j$ 的总和，<del>意会下</del>，只需要求 $B_j-B_{i-1}$ 就好啦</p>
-<p><del>很明显</del>，利用前缀和的方法，因为B数组是在读入时进行处理，可以看作不需要时间，而查询的时间复杂度就是 $O(1)$ 啦</p>
-<h5 id="二维前缀和">二维前缀和</h5>
-<p>一维前缀和会了二维的也很简单</p>
-<p>$$
-A=
-\left[
-\begin{matrix}
-5 &amp; 6 &amp; 6 &amp; 1 &amp; 4 &amp; 6\
-3 &amp; 4 &amp; 2 &amp; 4 &amp; 1 &amp; 7 \
-0 &amp; 9 &amp; 4 &amp; 6 &amp; 2 &amp; 4
-\end{matrix}
-\right]
-;
-B=
-\left[
-\begin{matrix}
-5 &amp; 11 &amp; 17 &amp; 18 &amp; 21 &amp; 27\
-8 &amp; 18 &amp; 26 &amp; \cdots &amp; \cdots &amp; \cdots \
-\cdots &amp; \cdots &amp; \cdots &amp; \cdots  &amp; \cdots &amp; \cdots
-\end{matrix}
-\right]
-$$</p>
-<p>若我们要求 $x_1,,y_1$ 与 $x_2,,y_2$ 两点所围成矩形内数字的和
-公式 $sum=B_{x_2,y_2}-B_{x_2,1}-B_{1,y_1}+B_{x_1-1,y_1-1}$</p>
-<h3 id="储存">储存</h3>
-<p>树状数组本质就是一个数组，我们用 C 来表示，然后把 C 排成数🎄的样子，就像前面的那个图那样</p>
-<p><img src="https://gitee.com/royce2003/blog/raw/master/img/0dd7912397dda14482d369acbfb7d0a20df486d1.jpg" alt="树状数组结构"></p>
-<p>$C[1]=A[1]$<br>$C[2]=A[1]+A[2]$<br>$C[3]=A[3]$<br>$C[4]=A[1]+A[2]+A[3]+A[4]$<br>$C[5]=A[5]$<br>$C[6]=A[5]+A[6]$<br>$C[7]=A[7]$<br>$C[8]=A[1]+A[2] \cdots A[8]$</p>
-<p>很明显 $C[i]=A[i-lowbit(i)+1]+A[i-lowbit(i)+2]+ \cdots +A[i]$</p>
-<p>用代码写就是</p>
-<pre><code class="language-cpp">for (j=i-lowbit(i)+1; j&lt;= i; j++)
-    c[i] += a[j];</code></pre>
-<p>对于 1, 3, 5, 7 这类 $C[i]$ 后只有一个 $A[i]$ 的，我们称之为基点<br>不难发现基点的都是是奇数，即 lowbit=1
-反之，lowbit=1 的数一定是奇数，也一定是基点。</p>
-<p>而对于 1, 2, 4, 8 这类 $C[i]$ 后是 $\sum_{x=1}^i a_x$ 的，我们称之为统括点<br>也不难发现，统括点的二进制能写成 1000…… 的形式
-那么统括点一定就是 2 的幂，反之 2 的幂也一定是统括点</p>
-<p>特别的，1 既是基点又是统括点<br>6 不是基点也不是统括点</p>
-<h3 id="单点修改">单点修改</h3>
-<p>如何进行单点修改，其实在之前已经讲过了<br>比如我们让 $A[3]+1$，那么有包含 $A[3]$ 的所有 $C$ 都要 $+1$
-包括 $C[3],C[4],C[8],C[16],C[32]\cdots$</p>
-<p>那么我们只需要这样就行了</p>
-<pre><code class="language-cpp">for(j=i; j&lt;=n; j+=lowbit(j))
-    C[i] += x;</code></pre>
-<h3 id="区间查询">区间查询</h3>
-<p>要想得到 i 到 j 的所有数的总和 $sum_{i,j}$，只需要得到 $sum_{1,i}$ 和 $sum_{1,j}$</p>
-<p>$$
-sum_{i,j} = sum_{1,i} - sum_{1,j} + A_i
-$$</p>
-<p>也就是前面讲到的前缀和</p>
-<p>先求 $sum_{1,i}$ ，即从 i 开始不断减去 lowbit 并加 C 的值，直到找到第一个统括点（第一个包含该点的统括点）</p>
-<pre><code class="language-cpp">int find(int x) {
-    int sum = 0,i;
-    for(i=x; i!=lowbit(i); i-=lowbit(i))
-        sum += c[i];
-    sum += c[i]; //因为最后一次循环并没有进入，故在此处再加一次c[i]
-    return sum;
-}</code></pre>
-<p>$sum_{1,j}$ 同理</p>
-<h3 id="结束">结束</h3>
-<p>附上 AC 代码</p>
-<pre><code class="language-cpp">#include &lt;cstdio&gt;
-#include &lt;iostream&gt;
-using namespace std;
-
-int n,m,k,x,aa;
-int a,c[500110];
-
-int lowbit(int x) {
-    return x &amp; -x;
-}
-void add(int x,int k) {
-    while(x&lt;=n) {
-        c[x] += k;
-        x += lowbit(x);
-    }
-}
-int find(int x) {
-    int sum = 0,i;
-    for(i=x;i!=lowbit(i);i-=lowbit(i))
-        sum += c[i];
-    sum += c[i];
-    return sum;
-}
-
-int main() {ssd
-    cin &gt;&gt; n &gt;&gt; m;
-    for(int i=1;i&lt;=n;i++) {
-        cin &gt;&gt; a;
-        add(i,a);
-    }
-    while(m--) {
-        cin &gt;&gt; aa &gt;&gt; x &gt;&gt; k;
-        if(aa==1) add(x,k);
-        else cout &lt;&lt; find(k) - find(x-1) &lt;&lt; endl; //此处和 find(k) - find(x) + a[x] 是一样的
-    }
-    return 0;
-}</code></pre>
-<p>[^1]: 题目来源：<a href="https://www.luogu.com.cn/problem/P3374">P3374 - 洛谷 | 计算机科学教育新生态</a></p>
 ]]></content:encoded>
         </item>
         <item>
@@ -890,6 +646,309 @@ int main() {
 <p>学完可以做做 <a href="https://www.luogu.com.cn/problem/P2068">P2068 统计和</a></p>
 <p>[^1]: 题目来源 <a href="https://www.luogu.com.cn/problem/P3372">【模板】线段树 1 - 洛谷</a>
 [^2]: 来自 <a href="https://oi-wiki.org/ds/seg/#_4">线段树 - OI Wiki</a></p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[P3368 【模板】树状数组 1]]></title>
+            <link>https://tiiwoo.github.io/TiiWoo.github.io/posts/fenwick-tree-1/</link>
+            <guid>https://tiiwoo.github.io/TiiWoo.github.io/posts/fenwick-tree-1/</guid>
+            <pubDate>Sat, 06 Feb 2021 00:00:00 GMT</pubDate>
+            <content:encoded><![CDATA[<h2 id="题目">题目</h2>
+<p>[^1]</p>
+<h4 id="题目描述">题目描述</h4>
+<p>如题，已知一个数列，你需要进行下面两种操作：</p>
+<ul>
+<li>将某一个数加上 $x$</li>
+<li>求出某区间每一个数的和</li>
+</ul>
+<!--more-->
+
+<h4 id="输入格式">输入格式</h4>
+<p>第一行包含两个正整数 $n,m$，分别表示该数列数字的个数和操作的总个数。</p>
+<p>第二行包含 $n$ 个用空格分隔的整数，其中第 $i$ 个数字表示数列第 $i$ 项的初始值。</p>
+<p>接下来 $m$ 行每行包含 33 个整数，表示一个操作，具体如下：</p>
+<ul>
+<li><code>1 x k</code> 含义：将第 $x$ 个数加上 $k$</li>
+<li><code>2 x y</code> 含义：输出区间 $[x,y]$ 内每个数的和</li>
+</ul>
+<h4 id="输出格式">输出格式</h4>
+<p>输出包含若干行整数，即为所有操作 22 的结果。</p>
+<h4 id="输入输出样例">输入输出样例</h4>
+<p><strong>输入 #1</strong></p>
+<pre><code class="language-text">5 5
+1 5 4 2 3
+1 1 3
+2 2 5
+1 3 -1
+1 4 2
+2 1 4</code></pre>
+<p><strong>输出 #1</strong></p>
+<pre><code class="language-text">14
+16</code></pre>
+<h4 id="说明提示">说明/提示</h4>
+<p>【数据范围】</p>
+<p>对于 $30%$ 的数据，$1 \le n \le 8，1\le m \le 10$；</p>
+<p>对于 $70%$ 的数据，$1\le n,,m\le10^4;$</p>
+<p>对于 $100%$ 的数据，$1\le n,m \le 5\times 10^5$。</p>
+<p>样例说明：</p>
+<p>故输出结果 14、16</p>
+<p><img src="https://gitee.com/royce2003/blog/raw/master/img/2256.png" alt="数据范围"></p>
+<p>(写这篇呢其实是因为自己已经不会树状数组了，正好借此机会复习下 QAQ)</p>
+<h2 id="题解">题解</h2>
+<h3 id="树状数组">树状数组</h3>
+<p>首先需要了解什么是 <code>树状数组</code></p>
+<p>树状数组用的是树结构的思想，即树型逻辑结构，但他不是树形结构啦</p>
+<h4 id="特点">特点</h4>
+<blockquote>
+<p>树状数组 (Binary Indexed Tree(B.I.T), Fenwick Tree)是一个查询和修改复杂度都为 og(n) 的数据结构。主要用于查询任意两位之间的所有元素之和，但是每次只能修改一个元素的值；经过简单修改可以在 log(n) 的复杂度下进行范围修改，但是这时只能查询其中一个元素的值(如果加入多个辅助数组则可以实现区间修改与区间查询)。</p>
+</blockquote>
+<p>对于这题，简单来说就是单点修改区间查询，一般地，树状数组不支持区间修改单点差选，但是我们也有办法让他支持.....</p>
+<p>树状数组的优势就在于其维护的时间复杂度为 $O(log , n)$ ，而类似的前缀和数组维护的时间复杂度为 $O(n)$，两者的查询都是 $O(1)$</p>
+<p>（说到这我就想起来某次校内赛的xzt买煎饼。。。。还好我拿了20分）</p>
+<h3 id="前置知识">前置知识</h3>
+<h4 id="lowbit">lowbit</h4>
+<p>实际上，对于树状数组 $tree$ 的每一个 $i$，其实际意义应该为：算上其本身的讯息，总共存储了 $2^k$ 个元素的信息，其中 $k$ 表示 $i$ 在二进制下，末尾零的个数，同时也可以表示最小的含 1 位的二进制权值——换句话讲，$2^k$ 即可表示成：对于每个二进制意义下的 $i$，从最末位数 $k+1$ 位，保留这 $k+1$ 位并删除 $k+1$ 位以左的所有数位上的数，留下的新二进制数的实际大</p>
+<p><img src="https://gitee.com/royce2003/blog/raw/master/img/0dd7912397dda14482d369acbfb7d0a20df486d1.jpg" alt="树状数组结构"></p>
+<table>
+<thead>
+<tr>
+<th align="center">十进制</th>
+<th align="center">二进制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">10</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">11</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">100</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">101</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">110</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center">111</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="center">1000</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="center">1001</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">1010</td>
+</tr>
+</tbody></table>
+<p>图文并茂之后有没有看出点什么 QAQ</p>
+<p>记得当时学的时候，在学校大佬的帮助下才理解了这些东西，可能我比较菜吧</p>
+<p><del>没看出来就多看几遍吧</del> 好像也还是看不出来，那就记下来结论吧</p>
+<p>对于每一个 $x$ 的最低含一位，即上文中的 $2^k$,可以借助一个 $lowbit$ 函数实现 emmm 一个极其玄学的东西</p>
+<p>再把 <code>lowbit</code> 说简单点就是</p>
+<p>把一个整数变成二进制，从右往左找到第一个1，然后返回这个1所表示的十进制值。</p>
+<p>玄学公式登场 <code>x &amp; -x</code></p>
+<p>举个例子</p>
+<p>$$
+4 = 100,,-4 = 011 + 1 = 100\
+~\
+\because100,&amp;,100=100=4 \
+ ~\
+\therefore lowbit(4)=4\
+$$</p>
+<pre><code class="language-cpp">int lowbit(int x) {
+    return x &amp; -x; //就是这么玄学
+}</code></pre>
+<p>为什么要这样干呢</p>
+<p>我们先列出 1~8 的 $lowbit$</p>
+<p>$1;2;1;4;1;2;1;8$</p>
+<p>我们让 $C[i]$ 管理 $A[i-lowbit(i)+1,,i]$ 这段区间，如下图</p>
+<p><img src="https://gitee.com/royce2003/blog/raw/master/img/Snipaste_03-19_11-45-31.png" alt="对应管理"></p>
+<p>那么我们把某个点 $+x$ 的时候只需要把能管到这个点的都 $+x$ 就好啦，那我们如何找哪些能管到我们修改的点呢，这时候就需要 $lowbit$ 了</p>
+<h4 id="前缀和">前缀和</h4>
+<h5 id="一维前缀和">一维前缀和</h5>
+<p>现有一个长度为 $N$ 的序列 $A$，需要进行 $M$ 次操作，每次操作选取从 $A_i$ 到 $A_j$ 共 $j-i+1$ 个数并求出他们的总和 （N 和 M 可以很大）  </p>
+<p>例：</p>
+<p>$$
+N=9,;A={3,1,4,1,5,9,2,6,5}
+$$</p>
+<p>如果按照题意暴力，最坏情况下时间复杂度 $O(n\times m)$（是这个吗，我咋感觉时间复杂度好像大概可能不是这个QAQ）</p>
+<p>反正时间复杂度挺高的就对了</p>
+<p>那我们可以新建一个数组 $B$ ，其中 $B_i=B_{i-1} +A_i$</p>
+<p>此时我们需要求 $a_i-a_j$ 的总和，<del>意会下</del>，只需要求 $B_j-B_{i-1}$ 就好啦</p>
+<p><del>很明显</del>，利用前缀和的方法，因为B数组是在读入时进行处理，可以看作不需要时间，而查询的时间复杂度就是 $O(1)$ 啦</p>
+<h5 id="二维前缀和">二维前缀和</h5>
+<p>一维前缀和会了二维的也很简单</p>
+<p>$$
+A=
+\left[
+\begin{matrix}
+5 &amp; 6 &amp; 6 &amp; 1 &amp; 4 &amp; 6\
+3 &amp; 4 &amp; 2 &amp; 4 &amp; 1 &amp; 7 \
+0 &amp; 9 &amp; 4 &amp; 6 &amp; 2 &amp; 4
+\end{matrix}
+\right]
+;
+B=
+\left[
+\begin{matrix}
+5 &amp; 11 &amp; 17 &amp; 18 &amp; 21 &amp; 27\
+8 &amp; 18 &amp; 26 &amp; \cdots &amp; \cdots &amp; \cdots \
+\cdots &amp; \cdots &amp; \cdots &amp; \cdots  &amp; \cdots &amp; \cdots
+\end{matrix}
+\right]
+$$</p>
+<p>若我们要求 $x_1,,y_1$ 与 $x_2,,y_2$ 两点所围成矩形内数字的和
+公式 $sum=B_{x_2,y_2}-B_{x_2,1}-B_{1,y_1}+B_{x_1-1,y_1-1}$</p>
+<h3 id="储存">储存</h3>
+<p>树状数组本质就是一个数组，我们用 C 来表示，然后把 C 排成数🎄的样子，就像前面的那个图那样</p>
+<p><img src="https://gitee.com/royce2003/blog/raw/master/img/0dd7912397dda14482d369acbfb7d0a20df486d1.jpg" alt="树状数组结构"></p>
+<p>$C[1]=A[1]$<br>$C[2]=A[1]+A[2]$<br>$C[3]=A[3]$<br>$C[4]=A[1]+A[2]+A[3]+A[4]$<br>$C[5]=A[5]$<br>$C[6]=A[5]+A[6]$<br>$C[7]=A[7]$<br>$C[8]=A[1]+A[2] \cdots A[8]$</p>
+<p>很明显 $C[i]=A[i-lowbit(i)+1]+A[i-lowbit(i)+2]+ \cdots +A[i]$</p>
+<p>用代码写就是</p>
+<pre><code class="language-cpp">for (j=i-lowbit(i)+1; j&lt;= i; j++)
+    c[i] += a[j];</code></pre>
+<p>对于 1, 3, 5, 7 这类 $C[i]$ 后只有一个 $A[i]$ 的，我们称之为基点<br>不难发现基点的都是是奇数，即 lowbit=1
+反之，lowbit=1 的数一定是奇数，也一定是基点。</p>
+<p>而对于 1, 2, 4, 8 这类 $C[i]$ 后是 $\sum_{x=1}^i a_x$ 的，我们称之为统括点<br>也不难发现，统括点的二进制能写成 1000…… 的形式
+那么统括点一定就是 2 的幂，反之 2 的幂也一定是统括点</p>
+<p>特别的，1 既是基点又是统括点<br>6 不是基点也不是统括点</p>
+<h3 id="单点修改">单点修改</h3>
+<p>如何进行单点修改，其实在之前已经讲过了<br>比如我们让 $A[3]+1$，那么有包含 $A[3]$ 的所有 $C$ 都要 $+1$
+包括 $C[3],C[4],C[8],C[16],C[32]\cdots$</p>
+<p>那么我们只需要这样就行了</p>
+<pre><code class="language-cpp">for(j=i; j&lt;=n; j+=lowbit(j))
+    C[i] += x;</code></pre>
+<h3 id="区间查询">区间查询</h3>
+<p>要想得到 i 到 j 的所有数的总和 $sum_{i,j}$，只需要得到 $sum_{1,i}$ 和 $sum_{1,j}$</p>
+<p>$$
+sum_{i,j} = sum_{1,i} - sum_{1,j} + A_i
+$$</p>
+<p>也就是前面讲到的前缀和</p>
+<p>先求 $sum_{1,i}$ ，即从 i 开始不断减去 lowbit 并加 C 的值，直到找到第一个统括点（第一个包含该点的统括点）</p>
+<pre><code class="language-cpp">int find(int x) {
+    int sum = 0,i;
+    for(i=x; i!=lowbit(i); i-=lowbit(i))
+        sum += c[i];
+    sum += c[i]; //因为最后一次循环并没有进入，故在此处再加一次c[i]
+    return sum;
+}</code></pre>
+<p>$sum_{1,j}$ 同理</p>
+<h3 id="结束">结束</h3>
+<p>附上 AC 代码</p>
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+using namespace std;
+
+int n,m,k,x,aa;
+int a,c[500110];
+
+int lowbit(int x) {
+    return x &amp; -x;
+}
+void add(int x,int k) {
+    while(x&lt;=n) {
+        c[x] += k;
+        x += lowbit(x);
+    }
+}
+int find(int x) {
+    int sum = 0,i;
+    for(i=x;i!=lowbit(i);i-=lowbit(i))
+        sum += c[i];
+    sum += c[i];
+    return sum;
+}
+
+int main() {ssd
+    cin &gt;&gt; n &gt;&gt; m;
+    for(int i=1;i&lt;=n;i++) {
+        cin &gt;&gt; a;
+        add(i,a);
+    }
+    while(m--) {
+        cin &gt;&gt; aa &gt;&gt; x &gt;&gt; k;
+        if(aa==1) add(x,k);
+        else cout &lt;&lt; find(k) - find(x-1) &lt;&lt; endl; //此处和 find(k) - find(x) + a[x] 是一样的
+    }
+    return 0;
+}</code></pre>
+<p>[^1]: 题目来源：<a href="https://www.luogu.com.cn/problem/P3374">P3374 - 洛谷 | 计算机科学教育新生态</a></p>
+]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[背包问题]]></title>
+            <link>https://tiiwoo.github.io/TiiWoo.github.io/posts/bag-problems/</link>
+            <guid>https://tiiwoo.github.io/TiiWoo.github.io/posts/bag-problems/</guid>
+            <pubDate>Sat, 06 Feb 2021 00:00:00 GMT</pubDate>
+            <content:encoded><![CDATA[<h1 id="背包问题">背包问题</h1>
+<p>​    背包问题就是通常给你一个体积为$V$的背包，再给你几件体积分别为$v_i$，价值为$w_i$的物品，让你求得这个体积为V的背包能装下的物品的最大价值总和。</p>
+<h2 id="101背包">1.01背包</h2>
+<p>多种物品，每种物品只有<strong>一个</strong>，求能获得的最大总价值。</p>
+<p>01背包我们用$f[i][j]$来了表示在前i件物品中我们背包体积为j的情况下所能装下的最大物品价值。</p>
+<blockquote>
+<p>我在考虑第i件物品的时候这样来划分---&gt;根据是否要选择第i件物品分为两类</p>
+<p>1.不选择第i件物品---&gt;那么这种情况下，$f[i][j]$就能从$f[i - 1][j]$转移过来</p>
+<p>​    原因是在不选第i件的前提下，一个体积为j的背包，从前i件物品中选择和从前i-1件物品中选择是相同的。(反正我又不选第i件，所以选择范围是否包含第i件物品没有关系)</p>
+<p>2.选择第i件物品---&gt;这种情况下，$f[i][j]$就能从$f[i - 1][j - v[i]] + w[i]$转移过来</p>
+<p>​    原因是我们已经确定要选择第i件物品了，所以对于前面i-1件物品的，我们只剩下体积为j-v[i]的背包空间了，因为我们必须要装下第i件物品，所以对于体积为j的背包，我们要预留下v[i]。所以我们只需要通过计算在前i-1件物品中，体积为j-v[i]的背包能装下的最大价值(即$f[i - 1][j - v[i]]$加上w[i]即为选择第i件物品的情况。</p>
+</blockquote>
+<p><strong>所以我们只需要去两种情况的最大值即可，即$f[i][j] = max(f[i - 1][j], f[i - 1][j - v[i]] + w[i])$</strong></p>
+<h4 id="朴素版的01背包无任何优化，时间复杂度onm空间复杂度onm">朴素版的01背包(无任何优化)，时间复杂度$O(nm)$,空间复杂度$O(nm)$</h4>
+<pre><code class="language-cpp">// n是物品的总数，m是背包的总体积，v[i]，w[i]分别代表了第i件物品的体积和价值
+for (int i = 0; i &lt; n; i++)
+    for (int j = 0; j &lt;= m; j++)
+    {
+        f[i][j] = f[i - 1][j];
+        if (j - v[i] &gt;= 0) f[i][j] = max(f[i][j], f[i - 1][j - v[i]] + w[i]);
+    }</code></pre>
+<p>观察上面的代码，我们发现，f[i][]的更新只依赖于f[i - 1][]，所以使用二维数组会有冗余，我们可以省去一维。</p>
+<h4 id="优化空间为om的版本">优化空间为$O(m)$的版本</h4>
+<pre><code class="language-cpp">// 当没一层i完全遍历完后，f[j]代表从前i个物品选出体积为j的最大价值
+for (int i = 0; i &lt; n; i++)
+    for (int j = m; j &gt;= 0; j--)
+        f[j] = max(f[j], f[j - v[i]] + w[i]);</code></pre>
+<hr>
+<h2 id="2完全背包">2.完全背包</h2>
+<h3 id="01背包和完全背包递推式的对比">01背包和完全背包递推式的对比</h3>
+<p>$ f[i][j] = max(f[i - 1][j],f[i-1][j-v[i]]+w[i]);$   //01背包</p>
+<p>$f[i][j] = max(f[i - 1][j],f[i][j-v[i]]+w[i]);$      //完全背包问题</p>
+<p>我们观察上述连个递推式，不难发现，主要区别就只在于max函数的后一项</p>
+<ul>
+<li>01背包是f[i - 1][j - v[i]]</li>
+<li>完全背包是f[i][j - v[i]]</li>
+</ul>
+<p>这两项的区别就在于f的一维，一个是i-1，另一个是i，我们再根据递推式进行展开</p>
+<ul>
+<li>$f[i - 1][j - v[i]] = max(f[i - 1][j - v[i]], f[i - 2][j - v[i] - v[i - 1]] + w[i - 1]);$</li>
+<li>$f[i][j - v[i]] = max(f[i][j - v[i]], f[i][j - 2 * v[i]] + 2 * w[i]);$</li>
+</ul>
+<p>对比一下就能发现</p>
+<ul>
+<li>f[i - 1][j - v[i]]这一项是无法取到第i个物品的，也就是说，这一项只能从前i-1个物品中取，而且每一个物品仅能取一次。</li>
+<li>f[i][j - v[i]]这一项物品的选取范围还是前i个物品，也就是说，还能再次选取第i个物品，在体积允许的情况下，每个物品能取不限次数次。</li>
+</ul>
+<p>这样我们就又回到了题目的本质，01背包每件物品只能取一次，而完全背包每件物品能取任意此，进一步验证了我们的递推式的正确性。</p>
+<blockquote>
+<p>​    01背包中要按照j=V-&gt;0的逆序来循环。这是因为要保证第i次循环中的状态f[i][j] 是由状态f[i − 1][j − w [i]]递推而来。换句话说，这正是为了保证每件物品只选一次，保证在考虑“选入第i件物品”这件策略时，依据的是一个绝无已经选入第i件物品的子结果f[i − 1][j −  w[i]]。</p>
+<p>​    而现在完全背包的特点恰是每种物品可选无限件，所以在考虑“加选一件第i种物品”这种策略时，却正需要一个可能已选入第i i<em>i</em>种物品的子结果f[i][j − w[i]]，所以就可以并且必须采用j=0-&gt;V的顺序循环。这就是这个简单的程序为何成立的道理。</p>
+</blockquote>
 ]]></content:encoded>
         </item>
         <item>
