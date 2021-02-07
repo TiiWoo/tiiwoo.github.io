@@ -4,69 +4,10 @@
         <title>TiiWoo's Blog</title>
         <link>https://tiiwoo.github.io/TiiWoo.github.io</link>
         <description>喜欢玩</description>
-        <lastBuildDate>Sun, 07 Feb 2021 13:03:13 GMT</lastBuildDate>
+        <lastBuildDate>Sun, 07 Feb 2021 13:33:58 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>Gridsome Feed Plugin</generator>
         <atom:link href="https://tiiwoo.github.io/TiiWoo.github.io/atom.xml" rel="self" type="application/rss+xml"/>
-        <item>
-            <title><![CDATA[背包问题]]></title>
-            <link>https://tiiwoo.github.io/TiiWoo.github.io/posts/bag-problems/</link>
-            <guid>https://tiiwoo.github.io/TiiWoo.github.io/posts/bag-problems/</guid>
-            <pubDate>Sat, 06 Feb 2021 00:00:00 GMT</pubDate>
-            <content:encoded><![CDATA[<h1 id="背包问题">背包问题</h1>
-<p>​    背包问题就是通常给你一个体积为$V$的背包，再给你几件体积分别为$v_i$，价值为$w_i$的物品，让你求得这个体积为V的背包能装下的物品的最大价值总和。</p>
-<h2 id="101背包">1.01背包</h2>
-<p>多种物品，每种物品只有<strong>一个</strong>，求能获得的最大总价值。</p>
-<p>01背包我们用$f[i][j]$来了表示在前i件物品中我们背包体积为j的情况下所能装下的最大物品价值。</p>
-<blockquote>
-<p>我在考虑第i件物品的时候这样来划分---&gt;根据是否要选择第i件物品分为两类</p>
-<p>1.不选择第i件物品---&gt;那么这种情况下，$f[i][j]$就能从$f[i - 1][j]$转移过来</p>
-<p>​    原因是在不选第i件的前提下，一个体积为j的背包，从前i件物品中选择和从前i-1件物品中选择是相同的。(反正我又不选第i件，所以选择范围是否包含第i件物品没有关系)</p>
-<p>2.选择第i件物品---&gt;这种情况下，$f[i][j]$就能从$f[i - 1][j - v[i]] + w[i]$转移过来</p>
-<p>​    原因是我们已经确定要选择第i件物品了，所以对于前面i-1件物品的，我们只剩下体积为j-v[i]的背包空间了，因为我们必须要装下第i件物品，所以对于体积为j的背包，我们要预留下v[i]。所以我们只需要通过计算在前i-1件物品中，体积为j-v[i]的背包能装下的最大价值(即$f[i - 1][j - v[i]]$加上w[i]即为选择第i件物品的情况。</p>
-</blockquote>
-<p><strong>所以我们只需要去两种情况的最大值即可，即$f[i][j] = max(f[i - 1][j], f[i - 1][j - v[i]] + w[i])$</strong></p>
-<h4 id="朴素版的01背包无任何优化，时间复杂度onm空间复杂度onm">朴素版的01背包(无任何优化)，时间复杂度$O(nm)$,空间复杂度$O(nm)$</h4>
-<pre><code class="language-cpp">// n是物品的总数，m是背包的总体积，v[i]，w[i]分别代表了第i件物品的体积和价值
-for (int i = 0; i &lt; n; i++)
-    for (int j = 0; j &lt;= m; j++)
-    {
-        f[i][j] = f[i - 1][j];
-        if (j - v[i] &gt;= 0) f[i][j] = max(f[i][j], f[i - 1][j - v[i]] + w[i]);
-    }</code></pre>
-<p>观察上面的代码，我们发现，f[i][]的更新只依赖于f[i - 1][]，所以使用二维数组会有冗余，我们可以省去一维。</p>
-<h4 id="优化空间为om的版本">优化空间为$O(m)$的版本</h4>
-<pre><code class="language-cpp">// 当没一层i完全遍历完后，f[j]代表从前i个物品选出体积为j的最大价值
-for (int i = 0; i &lt; n; i++)
-    for (int j = m; j &gt;= 0; j--)
-        f[j] = max(f[j], f[j - v[i]] + w[i]);</code></pre>
-<hr>
-<h2 id="2完全背包">2.完全背包</h2>
-<h3 id="01背包和完全背包递推式的对比">01背包和完全背包递推式的对比</h3>
-<p>$ f[i][j] = max(f[i - 1][j],f[i-1][j-v[i]]+w[i]);$   //01背包</p>
-<p>$f[i][j] = max(f[i - 1][j],f[i][j-v[i]]+w[i]);$      //完全背包问题</p>
-<p>我们观察上述连个递推式，不难发现，主要区别就只在于max函数的后一项</p>
-<ul>
-<li>01背包是f[i - 1][j - v[i]]</li>
-<li>完全背包是f[i][j - v[i]]</li>
-</ul>
-<p>这两项的区别就在于f的一维，一个是i-1，另一个是i，我们再根据递推式进行展开</p>
-<ul>
-<li>$f[i - 1][j - v[i]] = max(f[i - 1][j - v[i]], f[i - 2][j - v[i] - v[i - 1]] + w[i - 1]);$</li>
-<li>$f[i][j - v[i]] = max(f[i][j - v[i]], f[i][j - 2 * v[i]] + 2 * w[i]);$</li>
-</ul>
-<p>对比一下就能发现</p>
-<ul>
-<li>f[i - 1][j - v[i]]这一项是无法取到第i个物品的，也就是说，这一项只能从前i-1个物品中取，而且每一个物品仅能取一次。</li>
-<li>f[i][j - v[i]]这一项物品的选取范围还是前i个物品，也就是说，还能再次选取第i个物品，在体积允许的情况下，每个物品能取不限次数次。</li>
-</ul>
-<p>这样我们就又回到了题目的本质，01背包每件物品只能取一次，而完全背包每件物品能取任意此，进一步验证了我们的递推式的正确性。</p>
-<blockquote>
-<p>​    01背包中要按照j=V-&gt;0的逆序来循环。这是因为要保证第i次循环中的状态f[i][j] 是由状态f[i − 1][j − w [i]]递推而来。换句话说，这正是为了保证每件物品只选一次，保证在考虑“选入第i件物品”这件策略时，依据的是一个绝无已经选入第i件物品的子结果f[i − 1][j −  w[i]]。</p>
-<p>​    而现在完全背包的特点恰是每种物品可选无限件，所以在考虑“加选一件第i种物品”这种策略时，却正需要一个可能已选入第i i<em>i</em>种物品的子结果f[i][j − w[i]]，所以就可以并且必须采用j=0-&gt;V的顺序循环。这就是这个简单的程序为何成立的道理。</p>
-</blockquote>
-]]></content:encoded>
-        </item>
         <item>
             <title><![CDATA[Hello World]]></title>
             <link>https://tiiwoo.github.io/TiiWoo.github.io/posts/hello-world/</link>
