@@ -1,7 +1,7 @@
 ---
 title: "背包问题"
 date: 2021-02-06
-published: true
+published: false
 license: false
 slug: bag-problems
 tags: ['Algorithm']
