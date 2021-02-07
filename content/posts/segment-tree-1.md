@@ -1,7 +1,7 @@
 ---
 title: "P3372 【模板】线段树 1"
 date: 2021-02-07
-published: ture
+published: true
 license: false
 slug: segment-tree-1
 tags: ['Algorithm']
